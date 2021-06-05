@@ -1,0 +1,72 @@
+#include "quasi88.h"
+#include "pc88main.h"
+#include "intr.h"
+#include "memory.h"
+#include "screen.h"
+#include "emu.h"
+#include "soundbd.h"
+#include "ptk_menu.h"
+#include "ptk_sound.h"
+#include "ptk_ext.h"
+#include "mame-quasi88.h"
+
+
+#define PROG_NAME "QUASI88 for PSP"
+
+t_conf pconfig_param[]=
+{
+{PCONF_INT,&cpu_timing,"cpu_timing"},
+{PCONF_DOUBLE,&cpu_clock_mhz,"cpu_clock_mhz"},
+{PCONF_DOUBLE,&sound_clock_mhz,"sound_clock_mhz"},
+{PCONF_DOUBLE,&vsync_freq_hz,"vsync_freq_hz"},
+{PCONF_INT,&use_extram,"use_extram"},
+{PCONF_INT,&use_jisho_rom,"use_jisho_rom"},
+{PCONF_INT,&boot_basic,"boot_basic"},
+{PCONF_INT,&boot_dipsw,"boot_dipsw"},
+{PCONF_INT,&boot_from_rom,"boot_from_rom"},
+{PCONF_INT,&boot_clock_4mhz,"boot_clock_4mhz"},
+{PCONF_BYTE,&baudrate_sw,"baudrate_sw"},
+{PCONF_INT,&verbose_level,"verbose_level"},
+{PCONF_INT,&frameskip_rate,"frameskip_rate"},
+{PCONF_INT,&use_auto_skip,"use_auto_skip"},
+
+{PCONF_INT,&sound_board,"sound_board"},
+{PCONF_INT,&pmenu_showfps,"pmenu_showfps"},
+{PCONF_INT,&pmenu_bgrun,"pmenu_bgrun"},
+
+
+{PCONF_INT,&pmenu_menu_start,"pmenu_menu_start"},
+{PCONF_INT,&pmenu_drive0_img,"pmenu_drive0_img"},
+{PCONF_INT,&pmenu_drive1_img,"pmenu_drive1_img"},
+{PCONF_STR,&pmenu_disk0,"pmenu_disk0"},
+{PCONF_STR,&pmenu_disk1,"pmenu_disk1"},
+
+{PCONF_INT,&pmenu_type_fs,"pmenu_type_fs"},
+{PCONF_UNSIGN,&sound_buf_size,"sound_buf_size"},
+{PCONF_INT,&ext_cpuclock,"ext_cpuclock"},
+
+{PCONF_INT,&pmenu_kc_aflag,"pmenu_kc_aflag"},
+{PCONF_INT,&pmenu_kctbl[PMENU_UP],"pmenu_up"},
+{PCONF_INT,&pmenu_kctbl[PMENU_DW],"pmenu_dw"},
+{PCONF_INT,&pmenu_kctbl[PMENU_LE],"pmenu_le"},
+{PCONF_INT,&pmenu_kctbl[PMENU_RI],"pmenu_ri"},
+{PCONF_INT,&pmenu_kctbl[PMENU_A],"pmenu_a"},
+{PCONF_INT,&pmenu_kctbl[PMENU_B],"pmenu_b"},
+{PCONF_INT,&pmenu_kctbl[PMENU_C],"pmenu_c"},
+{PCONF_INT,&pmenu_kctbl[PMENU_D],"pmenu_d"},
+{PCONF_INT,&pmenu_kctbl[PMENU_E],"pmenu_e"},
+{PCONF_INT,&pmenu_kctbl[PMENU_F],"pmenu_f"},
+
+{PCONF_INT,&pmenu_kctbl[PMENU_AUP],"pmenu_aup"},
+{PCONF_INT,&pmenu_kctbl[PMENU_ADW],"pmenu_adw"},
+{PCONF_INT,&pmenu_kctbl[PMENU_ALE],"pmenu_ale"},
+{PCONF_INT,&pmenu_kctbl[PMENU_ARI],"pmenu_ari"},
+
+{PCONF_INT,&ext_boot_clock_4mhz,"ext_boot_clock_4mhz"},
+{PCONF_INT,&ext_sound_board,"ext_sound_board"},
+{PCONF_INT,&use_fmgen,"use_fmgen"},
+{PCONF_INT,&pmenu_reset_start,"pmenu_reset_start"},
+
+{0,NULL,NULL}
+};
+

@@ -1,0 +1,88 @@
+TARGET = q88061
+ROMDIR = .
+DISKDIR = .
+TAPEDIR = .
+
+# enable fmgen
+USE_FMGEN = 1
+USE_USER_LIBS = 1
+
+SOUND_DIR = src/snddrv/src
+SNDDRV_DIR = src/snddrv/src/sound
+SNDQ88_DIR = src/snddrv/quasi88
+SNDDEP_DIR = src/PSP/SNDPSP
+FMGEN_DIR = src/fmgen
+SYS_DIR = PSP
+
+EXTRA_TARGETS = EBOOT.PBP
+PSP_EBOOT_TITLE = QUASI88 0.6.1 for PSP
+PSP_EBOOT_ICON = QUASI88PX.PNG
+
+SOUND_Q88_FILES = mame-quasi88.o beepintf.o beep.o 
+SOUND_BASE_FILES = 2203intf.o 2608intf.o ay8910.o fm.o ymdeltat.o filter.o \
+ mixer.o streams.o
+ 
+ SOUND_FMGEN_FILES =  2203fmgen.o 2608fmgen.o fmgen.o fmtimer.o	\
+ opna.o psg.o
+
+SOUND_FILE = sndintrf.o
+SOUND_DEP_FILE = snddrv-psp.o
+
+SYS_FILES = main.o event.o wait.o screen.o graph.o getconf.o file-op.o
+SYSTEM_OBJS = $(addprefix $(SYS_DIR)/,$(SYS_FILES))
+
+PTK_FILES = ptk_video.o ptk_font.o ptk_menu.o ptk_popup.o \
+ ptk_softkey.o ptk_ext.o ptk_sound.o ptk_config.o swkbd_bmp.o
+ 
+PSPTK_OBJS = $(addprefix ptk/,$(PTK_FILES))
+
+SNDOBJS = $(addprefix $(SNDDRV_DIR)/,$(SOUND_BASE_FILES)) \
+ $(addprefix $(SNDQ88_DIR)/,$(SOUND_Q88_FILES)) \
+ $(addprefix $(SNDDEP_DIR)/,$(SOUND_DEP_FILE)) \
+ $(addprefix $(SOUND_DIR)/,$(SOUND_FILE)) 
+
+Q88OBJS = quasi88.o emu.o memory.o status.o \
+	  pc88main.o crtcdmac.o soundbd.o pio.o intr.o \
+	  pc88sub.o fdc.o image.o monitor.o basic.o \
+	  menu.o menu-screen.o q8tk.o q8tk-glib.o suspend.o \
+	  keyboard.o romaji.o pause.o \
+	  z80.o z80-debug.o snapshot.o \
+	  screen-8bpp.o screen-16bpp.o screen-32bpp.o screen-snapshot.o \
+	  $(SOUND_OBJS) $(SYSTEM_OBJS) 
+
+Q88DIR = src/
+
+OBJS = $(addprefix $(Q88DIR),$(Q88OBJS)) $(PSPTK_OBJS)
+OBJS += $(SNDOBJS)
+
+INCDIR = 
+CFLAGS = -O2 -G0 -Wall -Iptk  -Isrc -Isrc/FUNIX -Isrc/PSP
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS = $(CFLAGS)
+
+CFLAGS += -DROM_DIR='"$(ROMDIR)"' -DDISK_DIR='"$(DISKDIR)"' \
+	  -DTAPE_DIR='"$(TAPEDIR)"' 
+
+CFLAGS += -DUSE_SOUND -I$(SNDDRV_DIR) -I$(SNDQ88_DIR) -I$(SOUND_DIR) \
+ -I$(SNDDEP_DIR)
+ 
+##
+## fmgen extension
+## 
+
+ifdef USE_FMGEN
+CFLAGS += -I$(FMGEN_DIR) -DUSE_FMGEN
+CXXFLAGS += -I$(FMGEN_DIR) -DUSE_FMGEN
+OBJS += $(addprefix $(FMGEN_DIR)/,$(SOUND_FMGEN_FILES))
+endif
+
+LIBDIR = 
+LDFLAGS = 
+LIBS = -lpspaudiolib -lpspaudio -lpspgu -lpsprtc -lpsppower -lm
+
+# changed to include self build.mak to use C++
+PSPSDK=$(shell psp-config --pspsdk-path)
+include 88build.mak
+
+
+LINK.c := psp-g++ $(LDFLAGS)
